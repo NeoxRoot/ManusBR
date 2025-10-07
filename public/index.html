@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ManusBR-AI | Análise de Futebol Brasileiro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary: #10b981;
+            --background: #0f172a;
+            --surface: #1e293b;
+            --surface-light: #334155;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            font-size: 32px;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--surface-light);
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            gap: 8px;
+            padding: 20px 0;
+            overflow-x: auto;
+        }
+
+        .nav-btn {
+            padding: 12px 24px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .nav-btn:hover {
+            background: var(--surface-light);
+            border-color: var(--primary);
+        }
+
+        .nav-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* Main Content */
+        main {
+            padding: 40px 0;
+            min-height: calc(100vh - 200px);
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-icon {
+            font-size: 24px;
+        }
+
+        /* Grid */
+        .grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+
+        .grid-4 {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+
+        /* KPI Cards */
+        .kpi-card {
+            background: linear-gradient(135deg, var(--surface), var(--surface-light));
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .kpi-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+
+        .kpi-value {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .kpi-label {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* Table */
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: var(--surface-light);
+        }
+
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tbody tr {
+            transition: background 0.2s;
+        }
+
+        tbody tr:hover {
+            background: var(--surface-light);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: var(--surface-light);
+            color: var(--text);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--surface-light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 16px;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-success { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+        .badge-warning { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
+        .badge-error { background: rgba(239, 68, 68, 0.2); color: var(--error); }
+        .badge-info { background: rgba(37, 99, 235, 0.2); color: var(--primary); }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+        }
+
+        .spinner {
+            border: 3px solid var(--surface-light);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Match Card */
+        .match-card {
+            background: var(--surface-light);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .team {
+            text-align: center;
+            flex: 1;
+        }
+
+        .team-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .team-badge {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .match-vs {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-muted);
+            padding: 0 20px;
+        }
+
+        .match-stats {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 20px;
+            font-size: 12px;
+        }
+
+        .stat {
+            flex: 1;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* Player Card */
+        .player-card {
+            background: var(--surface-light);
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .player-info {
+            flex: 1;
+        }
+
+        .player-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .player-details {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .player-stats {
+            text-align: right;
+        }
+
+        .player-price {
+            font-weight: 700;
+            color: var(--success);
+        }
+
+        .player-avg {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Lineup Builder */
+        .lineup-formation {
+            background: linear-gradient(to bottom, #1e3a28, #0f1f1a);
+            border-radius: 12px;
+            padding: 40px;
+            min-height: 500px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lineup-formation::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1px;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .formation-line {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 40px;
+            gap: 10px;
+        }
+
+        .player-slot {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            flex: 1;
+            max-width: 120px;
+            transition: all 0.3s;
+        }
+
+        .player-slot:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--primary);
+        }
+
+        .player-slot.filled {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .slot-pos {
+            font-size: 10px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 4px;
+        }
+
+        .slot-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .grid-2, .grid-3, .grid-4 {
+                grid-template-columns: 1fr;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .formation-line {
+                flex-wrap: wrap;
+            }
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.5s;
+        }
+
+        /* News Card */
+        .news-card {
+            background: var(--surface-light);
+            border-radius: 8px;
+            padding: 16px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .news-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .news-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            gap: 16px;
+        }
+
+        .news-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 12px;
+            margin-top: 8px;
+            display: inline-block;
+        }
+
+        .news-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">⚽</span>
+                    <div>
+                        <h1>ManusBR-AI</h1>
+                        <p style="font-size: 12px; color: var(--text-muted);">Análise de Futebol Brasileiro</p>
+                    </div>
+                </div>
+                <div class="status-badge">
+                    <span class="status-dot"></span>
+                    <span>API Online</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <div class="container">
+        <nav>
+            <button class="nav-btn active" onclick="showSection('dashboard')">📊 Dashboard</button>
+            <button class="nav-btn" onclick="showSection('teams')">🏆 Times</button>
+            <button class="nav-btn" onclick="showSection('players')">👥 Jogadores</button>
+            <button class="nav-btn" onclick="showSection('fixtures')">📅 Jogos</button>
+            <button class="nav-btn" onclick="showSection('analysis')">📈 Análise</button>
+            <button class="nav-btn" onclick="showSection('lineup')">🎯 Escalação</button>
+            <button class="nav-btn" onclick="showSection('news')">📰 Notícias</button>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="section active">
+            <div class="grid grid-4" id="kpiGrid">
+                <!-- KPIs will be loaded here -->
+            </div>
+            <br>
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="card-icon">🎯</span>
+                    Bem-vindo ao ManusBR-AI
+                </h2>
+                <p style="color: var(--text-muted); margin-bottom: 20px;">
+                    Sistema de análise de futebol brasileiro com IA para recomendações de escalação no Cartola FC.
+                </p>
+                <div class="grid grid-3">
+                    <div style="text-align: center; padding: 20px;">
+                        <div style="font-size: 40px; margin-bottom: 12px;">📊</div>
+                        <div style="font-weight: 600; margin-bottom: 8px;">Análise Poisson</div>
+                        <div style="font-size: 14px; color: var(--text-muted);">Probabilidades de gols e SG</div>
+                    </div>
+                    <div style="text-align: center; padding: 20px;">
+                        <div style="font-size: 40px; margin-bottom: 12px;">🎯</div>
+                        <div style="font-weight: 600; margin-bottom: 8px;">Escalações IA</div>
+                        <div style="font-size: 14px; color: var(--text-muted);">3 perfis otimizados</div>
+                    </div>
+                    <div style="text-align: center; padding: 20px;">
+                        <div style="font-size: 40px; margin-bottom: 12px;">📰</div>
+                        <div style="font-weight: 600; margin-bottom: 8px;">Notícias</div>
+                        <div style="font-size: 14px; color: var(--text-muted);">Atualizações em tempo real</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Teams Section -->
+        <section id="teams" class="section">
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="card-icon">🏆</span>
+                    Times do Brasileirão
+                </h2>
+                <div id="teamsList" class="grid grid-3">
+                    <!-- Teams will be loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Players Section -->
+        <section id="players" class="section">
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="card-icon">👥</span>
+                    Jogadores
+                </h2>
+                <div style="margin-bottom: 20px; display: flex; gap: 12px;">
+                    <select id="filterPosition" onchange="loadPlayers()" style="max-width: 200px;">
+                        <option value="">Todas as posições</option>
+                        <option value="GOL">Goleiro</option>
+                        <option value="LAT">Lateral</option>
+                        <option value="ZAG">Zagueiro</option>
+                        <option value="MEI">Meio-campo</option>
+                        <option value="ATA">Atacante</option>
+                    </select>
+                </div>
+                <div id="playersList">
+                    <!-- Players will be loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Fixtures Section -->
+        <section id="fixtures" class="section">
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="card-icon">📅</span>
+                    Jogos da Rodada
+                </h2>
+                <div style="margin-bottom: 20px;">
+                    <label>Selecione a Rodada:</label>
+                    <select id="selectRodada" onchange="loadFixtures()" style="max-width: 200px;">
+                        <option value="15">Rodada 15</option>
+                        <option value="16">Rodada 16</option>
+                        <option value="17">Rodada 17</option>
+                    </select>
+                </div>
+                <div id="fixturesList">
+                    <!-- Fixtures will be loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Analysis Section -->
+        <section id="analysis" class="section">
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="card-icon">📈</span>
+                    Análise da Rodada
+                </h2>
+                <div style="margin-bottom: 20px;">
+                    <label>Selecione a Rodada:</label>
+                    <select id="analysisRodada" onchange="loadAnalysis()" style="max-width: 200px;">
+                        <option value="15">Rodada 15</option>
+                        <option value="16">Rodada 16</option>
+                        <option value="17">Rodada 17</option>
+                    </select>
+                </div>
+                <div id="analysisList">
+                    <!-- Analysis will be loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Lineup Section -->
+        <section id="lineup" class="section">
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="card-icon">🎯</span>
+                    Construir Escalação
+                </h2>
+                <div class="grid grid-3" style="margin-bottom: 20px;">
+                    <div class="form-group">
+                        <label>Rodada</label>
+                        <select id="lineupRodada">
+                            <option value="15">Rodada 15</option>
+                            <option value="16">Rodada 16</option>
+                            <option value="17">Rodada 17</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Perfil</label>
+                        <select id="lineupPerfil">
+                            <option value="seguro">Seguro</option>
+                            <option value="teto">Teto</option>
+                            <option value="diferencial">Diferencial</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Orçamento (R$)</label>
+                        <input type="number" id="lineupOrcamento" value="120" min="0">
+                    </div>
+                </div>
+                <button class="btn" onclick="buildLineup()">
+                    <span>🎯</span>
+                    <span>Gerar Escalação</span>
+                </button>
+                <div id="lineupResult" style="margin-top: 20px;">
+                    <!-- Lineup will be displayed here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- News Section -->
+        <section id="news" class="section">
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="card-icon">📰</span>
+                    Notícias
+                </h2>
+                <div id="newsList">
+                    <!-- News will be loaded here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer style="background: var(--surface); border-top: 1px solid var(--border); padding: 20px 0; text-align: center; margin-top: 40px;">
+        <div class="container">
+            <p style="color: var(--text-muted); font-size: 14px;">
+                ManusBR-AI © 2025 | 
+                <a href="https://github.com/NeoxRoot/ManusBR" target="_blank" style="color: var(--primary); text-decoration: none;">GitHub</a> | 
+                Desenvolvido por NeoxRoot
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        const API_URL = window.location.hostname === 'localhost' 
+            ? 'http://localhost:3001' 
+            : 'https://manus-br.vercel.app';
+
+        // Navigation
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+
+            // Load data when section is shown
+            switch(sectionId) {
+                case 'dashboard': loadDashboard(); break;
+                case 'teams': loadTeams(); break;
+                case 'players': loadPlayers(); break;
+                case 'fixtures': loadFixtures(); break;
+                case 'analysis': loadAnalysis(); break;
+                case 'news': loadNews(); break;
+            }
+        }
+
+        // Load Dashboard
+        async function loadDashboard() {
+            try {
+                const [teams, players, fixtures, news] = await Promise.all([
+                    fetch(`${API_URL}/api/teams`).then(r => r.json()),
+                    fetch(`${API_URL}/api/players`).then(r => r.json()),
+                    fetch(`${API_URL}/api/fixtures`).then(r => r.json()),
+                    fetch(`${API_URL}/api/news`).then(r => r.json())
+                ]);
+
+                const kpiGrid = document.getElementById('kpiGrid');
+                kpiGrid.innerHTML = `
+                    <div class="kpi-card">
+                        <div class="kpi-icon">🏆</div>
+                        <div class="kpi-value">${teams.length}</div>
+                        <div class="kpi-label">Times</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon">⚽</div>
+                        <div class="kpi-value">${players.length}</div>
+                        <div class="kpi-label">Jogadores</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon">📅</div>
+                        <div class="kpi-value">${fixtures.length}</div>
+                        <div class="kpi-label">Jogos</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon">📰</div>
+                        <div class="kpi-value">${news.length}</div>
+                        <div class="kpi-label">Notícias</div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Erro ao carregar dashboard:', error);
+            }
+        }
+
+        // Load Teams
+        async function loadTeams() {
+            const container = document.getElementById('teamsList');
+            container.innerHTML = '<div class="loading"><div class="spinner"></div>Carregando times...</div>';
+
+            try {
+                const teams = await fetch(`${API_URL}/api/teams`).then(r => r.json());
+                
+                container.innerHTML = teams.map(team => `
+                    <div class="card" style="text-align: center;">
+                        <div style="font-size: 48px; margin-bottom: 12px;">🏆</div>
+                        <h3 style="margin-bottom: 8px;">${team.nome}</h3>
+                        <div class="badge badge-info">${team.sigla}</div>
+                        <div style="margin-top: 12px; width: 40px; height: 4px; background: ${team.cor}; margin: 12px auto;"></div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div>Erro ao carregar times</div>';
+            }
+        }
+
+        // Load Players
+        async function loadPlayers() {
+            const container = document.getElementById('playersList');
+            const position = document.getElementById('filterPosition').value;
+            container.innerHTML = '<div class="loading"><div class="spinner"></div>Carregando jogadores...</div>';
+
+            try {
+                const url = position 
+                    ? `${API_URL}/api/players?pos=${position}`
+                    : `${API_URL}/api/players`;
+                const players = await fetch(url).then(r => r.json());
+                
+                if (players.length === 0) {
+                    container.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div>Nenhum jogador encontrado</div>';
+                    return;
+                }
+
+                container.innerHTML = `
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        ${players.map(player => `
+                            <div class="player-card">
+                                <div class="player-info">
+                                    <div class="player-name">${player.nome}</div>
+                                    <div class="player-details">
+                                        <span class="badge badge-info">${player.pos}</span>
+                                        <span style="margin-left: 8px;">Time ${player.timeId}</span>
+                                    </div>
+                                </div>
+                                <div class="player-stats">
+                                    <div class="player-price">R$ ${player.preco.toFixed(1)}</div>
+                                    <div class="player-avg">Média: ${player.media.toFixed(1)}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } catch (error) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div>Erro ao carregar jogadores</div>';
+            }
+        }
+
+        // Load Fixtures
+        async function loadFixtures() {
+            const container = document.getElementById('fixturesList');
+            const rodada = document.getElementById('selectRodada').value;
+            container.innerHTML = '<div class="loading"><div class="spinner"></div>Carregando jogos...</div>';
+
+            try {
+                const fixtures = await fetch(`${API_URL}/api/fixtures?rodada=${rodada}`).then(r => r.json());
+                
+                container.innerHTML = `
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                        ${fixtures.map(fixture => `
+                            <div class="match-card">
+                                <div class="team">
+                                    <div class="team-name">${fixture.homeTeam.nome}</div>
+                                    <div class="team-badge">${fixture.homeTeam.sigla}</div>
+                                </div>
+                                <div class="match-vs">VS</div>
+                                <div class="team">
+                                    <div class="team-name">${fixture.awayTeam.nome}</div>
+                                    <div class="team-badge">${fixture.awayTeam.sigla}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } catch (error) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div>Erro ao carregar jogos</div>';
+            }
+        }
+
+        // Load Analysis
+        async function loadAnalysis() {
+            const container = document.getElementById('analysisList');
+            const rodada = document.getElementById('analysisRodada').value;
+            container.innerHTML = '<div class="loading"><div class="spinner"></div>Analisando rodada...</div>';
+
+            try {
+                const analysis = await fetch(`${API_URL}/api/analysis/rodada/${rodada}`).then(r => r.json());
+                
+                container.innerHTML = `
+                    ${analysis.confrontos.map(confronto => `
+                        <div class="card" style="margin-bottom: 16px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                <div class="team" style="flex: 1;">
+                                    <div class="team-name">${confronto.homeTeam.nome}</div>
+                                    <div class="badge badge-success">Casa</div>
+                                </div>
+                                <div style="font-size: 20px; font-weight: 700; color: var(--text-muted);">VS</div>
+                                <div class="team" style="flex: 1; text-align: right;">
+                                    <div class="team-name">${confronto.awayTeam.nome}</div>
+                                    <div class="badge badge-warning">Visitante</div>
+                                </div>
+                            </div>
+                            <div class="grid grid-4">
+                                <div>
+                                    <div class="stat-label">λ Casa</div>
+                                    <div class="stat-value" style="color: var(--success);">${confronto.poisson.lambdaHome}</div>
+                                </div>
+                                <div>
+                                    <div class="stat-label">λ Visitante</div>
+                                    <div class="stat-value" style="color: var(--warning);">${confronto.poisson.lambdaAway}</div>
+                                </div>
+                                <div>
+                                    <div class="stat-label">Prob SG Casa</div>
+                                    <div class="stat-value" style="color: var(--success);">${(confronto.sg.probSGHome * 100).toFixed(0)}%</div>
+                                </div>
+                                <div>
+                                    <div class="stat-label">Prob SG Visitante</div>
+                                    <div class="stat-value" style="color: var(--warning);">${(confronto.sg.probSGAway * 100).toFixed(0)}%</div>
+                                </div>
+                            </div>
+                            <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+                                <div class="grid grid-3">
+                                    <div>
+                                        <div class="stat-label">Forma Casa</div>
+                                        <div class="stat-value">${(confronto.homeTeam.features.forma * 100).toFixed(0)}%</div>
+                                    </div>
+                                    <div>
+                                        <div class="stat-label">Prob Empate</div>
+                                        <div class="stat-value">${(confronto.sg.probEmpate * 100).toFixed(0)}%</div>
+                                    </div>
+                                    <div>
+                                        <div class="stat-label">Forma Visitante</div>
+                                        <div class="stat-value">${(confronto.awayTeam.features.forma * 100).toFixed(0)}%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                `;
+            } catch (error) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div>Erro ao carregar análise</div>';
+            }
+        }
+
+        // Build Lineup
+        async function buildLineup() {
+            const container = document.getElementById('lineupResult');
+            const rodada = parseInt(document.getElementById('lineupRodada').value);
+            const perfil = document.getElementById('lineupPerfil').value;
+            const orcamento = parseFloat(document.getElementById('lineupOrcamento').value);
+
+            container.innerHTML = '<div class="loading"><div class="spinner"></div>Construindo escalação...</div>';
+
+            try {
+                const lineup = await fetch(`${API_URL}/api/lineup/build`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ rodada, perfil, orcamento, maxPorTime: 3 })
+                }).then(r => r.json());
+
+                container.innerHTML = `
+                    <div class="card" style="background: var(--surface-light); margin-top: 20px;">
+                        <div class="grid grid-3" style="margin-bottom: 20px;">
+                            <div style="text-align: center;">
+                                <div class="stat-label">Custo Total</div>
+                                <div class="stat-value" style="color: var(--success);">R$ ${lineup.custoTotal.toFixed(1)}</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div class="stat-label">Pontos Esperados</div>
+                                <div class="stat-value" style="color: var(--primary);">${lineup.pontosEsperados.toFixed(1)}</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div class="stat-label">Perfil</div>
+                                <div class="stat-value" style="text-transform: capitalize;">${lineup.perfil}</div>
+                            </div>
+                        </div>
+
+                        <div class="lineup-formation">
+                            <div class="formation-line">
+                                <div class="player-slot filled">
+                                    <div class="slot-pos">GOL</div>
+                                    <div class="slot-name">${lineup.gk.nome}</div>
+                                </div>
+                            </div>
+                            <div class="formation-line">
+                                ${lineup.defs.map(player => `
+                                    <div class="player-slot filled">
+                                        <div class="slot-pos">${player.pos}</div>
+                                        <div class="slot-name">${player.nome}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div class="formation-line">
+                                ${lineup.meds.map(player => `
+                                    <div class="player-slot filled">
+                                        <div class="slot-pos">${player.pos}</div>
+                                        <div class="slot-name">${player.nome}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div class="formation-line">
+                                ${lineup.fwds.map(player => `
+                                    <div class="player-slot filled">
+                                        <div class="slot-pos">${player.pos}</div>
+                                        <div class="slot-name">${player.nome}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 20px;">
+                            <h3 style="margin-bottom: 12px;">📋 Explicação</h3>
+                            ${lineup.explicacao.map((exp, i) => `
+                                <div style="padding: 12px; background: var(--surface); border-radius: 8px; margin-bottom: 8px; display: flex; gap: 12px;">
+                                    <span style="color: var(--primary); font-weight: 700;">${i + 1}.</span>
+                                    <span>${exp}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div>Erro ao construir escalação</div>';
+            }
+        }
+
+        // Load News
+        async function loadNews() {
+            const container = document.getElementById('newsList');
+            container.innerHTML = '<div class="loading"><div class="spinner"></div>Carregando notícias...</div>';
+
+            try {
+                const news = await fetch(`${API_URL}/api/news`).then(r => r.json());
+                
+                container.innerHTML = `
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                        ${news.map(item => `
+                            <div class="news-card">
+                                <div class="news-title">${item.titulo}</div>
+                                <div class="news-meta">
+                                    <span>📅 ${new Date(item.dataISO).toLocaleDateString('pt-BR')}</span>
+                                    <span>📡 ${item.fonte}</span>
+                                    ${item.categoria ? `<span class="badge badge-info">${item.categoria}</span>` : ''}
+                                </div>
+                                <a href="${item.link}" target="_blank" class="news-link">Ler mais →</a>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } catch (error) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-icon">❌</div>Erro ao carregar notícias</div>';
+            }
+        }
+
+        // Initialize
+        loadDashboard();
+    </script>
+</body>
+</html>

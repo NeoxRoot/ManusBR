@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -7,6 +8,9 @@ const PORT = process.env.PORT || 3001;
 // Middlewares
 app.use(cors());
 app.use(express.json());
+
+// Servir arquivos estáticos do frontend
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Dados mockados para demonstração
 const mockTeams = [
@@ -29,28 +33,6 @@ const mockFixtures = [
   { id: '1', rodada: 15, homeId: '1', awayId: '2', dataISO: '2024-01-15T16:00:00Z', status: 'agendada' },
   { id: '2', rodada: 15, homeId: '3', awayId: '4', dataISO: '2024-01-15T18:30:00Z', status: 'agendada' },
 ];
-
-// Rota raiz
-app.get('/', (req, res) => {
-  res.json({
-    name: 'ManusBR-AI',
-    version: '1.0.0',
-    description: 'IA para análise de futebol brasileiro e recomendações de escalação',
-    status: 'online',
-    endpoints: {
-      health: '/api/health',
-      documentation: '/api/test',
-      teams: '/api/teams',
-      players: '/api/players',
-      fixtures: '/api/fixtures',
-      analysis: '/api/analysis/rodada/:rodada',
-      lineup: '/api/lineup/build',
-      news: '/api/news'
-    },
-    github: 'https://github.com/NeoxRoot/ManusBR',
-    author: 'NeoxRoot'
-  });
-});
 
 // Rotas da API
 app.get('/api/health', (req, res) => {
