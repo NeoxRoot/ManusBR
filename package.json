@@ -1,0 +1,27 @@
+{
+  "name": "manusbr-ai",
+  "version": "1.0.0",
+  "description": "IA para análise de futebol brasileiro e recomendações de escalação",
+  "main": "server.js",
+  "engines": {
+    "node": ">=18.x"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "vercel-build": "echo 'Build complete'"
+  },
+  "keywords": [
+    "futebol",
+    "cartola",
+    "ia",
+    "analise",
+    "brasileirao"
+  ],
+  "author": "ManusBR-AI Team",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  }
+}
