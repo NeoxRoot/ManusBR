@@ -30,6 +30,28 @@ const mockFixtures = [
   { id: '2', rodada: 15, homeId: '3', awayId: '4', dataISO: '2024-01-15T18:30:00Z', status: 'agendada' },
 ];
 
+// Rota raiz
+app.get('/', (req, res) => {
+  res.json({
+    name: 'ManusBR-AI',
+    version: '1.0.0',
+    description: 'IA para análise de futebol brasileiro e recomendações de escalação',
+    status: 'online',
+    endpoints: {
+      health: '/api/health',
+      documentation: '/api/test',
+      teams: '/api/teams',
+      players: '/api/players',
+      fixtures: '/api/fixtures',
+      analysis: '/api/analysis/rodada/:rodada',
+      lineup: '/api/lineup/build',
+      news: '/api/news'
+    },
+    github: 'https://github.com/NeoxRoot/ManusBR',
+    author: 'NeoxRoot'
+  });
+});
+
 // Rotas da API
 app.get('/api/health', (req, res) => {
   res.json({
@@ -213,15 +235,20 @@ app.use('*', (req, res) => {
   });
 });
 
-// Iniciar servidor
-app.listen(PORT, () => {
-  console.log(`🚀 ManusBR-AI API rodando na porta ${PORT}`);
-  console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
-  console.log(`🧪 Teste: http://localhost:${PORT}/api/test`);
-  console.log(`⚽ Times: http://localhost:${PORT}/api/teams`);
-  console.log(`👥 Jogadores: http://localhost:${PORT}/api/players`);
-  console.log(`📅 Jogos: http://localhost:${PORT}/api/fixtures`);
-  console.log(`📈 Análise: http://localhost:${PORT}/api/analysis/rodada/15`);
-  console.log(`🎯 Escalação: POST http://localhost:${PORT}/api/lineup/build`);
-  console.log(`📰 Notícias: http://localhost:${PORT}/api/news`);
-});
+// Iniciar servidor (apenas para desenvolvimento local)
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`🚀 ManusBR-AI API rodando na porta ${PORT}`);
+    console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
+    console.log(`🧪 Teste: http://localhost:${PORT}/api/test`);
+    console.log(`⚽ Times: http://localhost:${PORT}/api/teams`);
+    console.log(`👥 Jogadores: http://localhost:${PORT}/api/players`);
+    console.log(`📅 Jogos: http://localhost:${PORT}/api/fixtures`);
+    console.log(`📈 Análise: http://localhost:${PORT}/api/analysis/rodada/15`);
+    console.log(`🎯 Escalação: POST http://localhost:${PORT}/api/lineup/build`);
+    console.log(`📰 Notícias: http://localhost:${PORT}/api/news`);
+  });
+}
+
+// Exportar para Vercel
+module.exports = app;
